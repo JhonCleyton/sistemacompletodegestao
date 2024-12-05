@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Área do Gerente</h2>
+            <p class="text-muted">Verificação de notas que requerem sua atenção</p>
+        </div>
+    </div>
+
+    {% if notas %}
+    <div class="row">
+        {% for nota in notas %}
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Nota #{{ nota.numero }}</h5>
+                    <span class="badge bg-warning">Aguardando Verificação</span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Detalhes da Nota:</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Produtor:</strong> {{ nota.produtor }}</li>
+                            <li><strong>Data:</strong> {{ nota.data_criacao.strftime('%d/%m/%Y') }}</li>
+                            <li><strong>Transportadora:</strong> {{ nota.transportadora }}</li>
+                            <li><strong>Motorista:</strong> {{ nota.motorista }}</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Observações do Financeiro:</h6>
+                        <div class="alert alert-info">
+                            {{ nota.observacoes_financeiro }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <a href="{{ url_for('ver_nota', id=nota.id) }}" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Ver Detalhes Completos
+                        </a>
+                    </div>
+
+                    <form action="{{ url_for('aprovar_gerente', id=nota.id) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações (obrigatório em caso de rejeição)</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="btn-group" role="group">
+                            <button type="submit" name="acao" value="aprovar" class="btn btn-success">
+                                <i class="fas fa-check"></i> Aprovar Alterações
+                            </button>
+                            <button type="submit" name="acao" value="rejeitar" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Rejeitar e Retornar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Não há notas aguardando verificação no momento.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.btn-group {
+    gap: 0.5rem;
+}
+
+.alert {
+    border-left: 4px solid;
+}
+
+.alert-info {
+    border-left-color: #0dcaf0;
+}
+</style>
+{% endblock %}
