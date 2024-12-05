@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Histórico da Nota #{{ nota.numero }}</h2>
+                <a href="{{ url_for('ver_nota', id=nota.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Usuário</th>
+                                    <th>Tipo de Alteração</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for h in nota.historico|sort(attribute='data_hora', reverse=True) %}
+                                <tr>
+                                    <td>{{ h.data_hora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                                    <td>{{ h.usuario.nome_completo }}</td>
+                                    <td>
+                                        {% if h.tipo_alteracao == 'criacao' %}
+                                            <span class="badge bg-success">Criação</span>
+                                        {% elif h.tipo_alteracao == 'edicao' %}
+                                            <span class="badge bg-primary">Edição</span>
+                                        {% elif h.tipo_alteracao == 'autorizacao' %}
+                                            <span class="badge bg-info">Autorização</span>
+                                        {% elif h.tipo_alteracao == 'aprovacao_financeira' %}
+                                            <span class="badge bg-warning">Aprovação Financeira</span>
+                                        {% elif h.tipo_alteracao == 'aprovacao_gerente' %}
+                                            <span class="badge bg-success">Aprovação Gerente</span>
+                                        {% elif h.tipo_alteracao == 'rejeicao_gerente' %}
+                                            <span class="badge bg-danger">Rejeição Gerente</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ h.tipo_alteracao }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ h.descricao }}</td>
+                                </tr>
+                                {% endfor %}
+                                
+                                {% if not nota.historico %}
+                                <tr>
+                                    <td colspan="4" class="text-center">Nenhum histórico encontrado.</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
